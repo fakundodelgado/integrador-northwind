@@ -1,0 +1,10 @@
+# Archivos de Eclipse e IDE
+bin/
+.settings/
+.classpath
+.project
+
+# Archivos de compilación de Maven y sistema
+target/
+.DS_Store
+Thumbs.db
