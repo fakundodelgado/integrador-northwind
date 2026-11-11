@@ -6,11 +6,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ItemListener;
+import java.sql.SQLException;
 import java.awt.event.ItemEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -34,8 +36,7 @@ public class VentanaSec extends JFrame {
 	private JTextField textField_9;
 	private JTextField textField_10;
 
-	/**
-	 * Launch the application.
+	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -51,8 +52,7 @@ public class VentanaSec extends JFrame {
 	}
 
 	
-	 * Create the frame.
-	 */
+	 
 	public VentanaSec() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -323,10 +323,44 @@ public class VentanaSec extends JFrame {
 		
 		JButton btnCargar = new JButton("Cargar");
 		btnCargar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				/*Ejecuta la accion cuando se presiona el boton.
-				 Aqui deberia ir la funcion creo*/
-			}
+		    public void actionPerformed(ActionEvent e) {
+		        Operador op = new Operador();
+		        
+		        try {
+		            // Pasamos los 12 parametros a la funcion en el orden exacto de los textFields
+		            String respuesta = op.abm(
+		                (String) comboBox.getSelectedItem(), // Trae "A", "B" o "M"
+		                textField_1.getText(),   // customerid
+		                textField_2.getText(),   // companyname
+		                textField_3.getText(),   // contactname
+		                textField_4.getText(),   // contacttitle
+		                textField_5.getText(),   // address
+		                textField_11.getText(),  // city
+		                textField_6.getText(),   // region
+		                textField_7.getText(),   // postalcode
+		                textField_8.getText(),   // country
+		                textField_9.getText(),   // phone
+		                textField_10.getText()   // fax
+		            );
+
+		            // Muestra el mensaje de EXITO que devuelve PostgreSQL
+		            JOptionPane.showMessageDialog(
+		                VentanaSec.this, 
+		                respuesta, 
+		                "Operación Exitosa", 
+		                JOptionPane.INFORMATION_MESSAGE
+		            );
+
+		        } catch (SQLException ex) {
+		            // Ataja cualquier RAISE EXCEPTION de PL/pgSQL
+		            JOptionPane.showMessageDialog(
+		                VentanaSec.this, 
+		                ex.getMessage(), 
+		                "Error en la Base de Datos", 
+		                JOptionPane.ERROR_MESSAGE
+		            );
+		        }
+		    }
 		});
 		
 		textField_10 = new JTextField();
