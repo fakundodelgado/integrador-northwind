@@ -195,16 +195,21 @@ else
         end if;
     end if;
 	
-	update customers set (
-    companyname, contactname, contacttitle, 
-    address, city, region, postalcode, country, phone, fax
-	) = (
-    p_companyname, p_contactname, p_contacttitle, 
-    p_address, p_city, p_region, p_postalcode, p_country, p_phone, p_fax
-	) where customerid = p_id;
+	update customers set 
+    companyname = coalesce(nullif(trim(p_companyname), ''),companyname), 
+    contactname = coalesce(nullif(trim(p_contactname), ''),contactname), 
+    contacttitle = coalesce(nullif(trim(p_contacttitle), ''),contacttitle), 
+    address = coalesce(nullif(trim(p_address), ''),address), 
+    city = coalesce(nullif(trim(p_city), ''),city), 
+    region = coalesce(nullif(trim(p_region), ''),region), 
+    postalcode = coalesce(nullif(trim(p_postalcode), ''),postalcode), 
+    country = coalesce(nullif(trim(p_country), ''),country), 
+    phone = coalesce(nullif(trim(p_phone), ''),phone), 
+    fax = coalesce(nullif(trim(p_fax), ''),fax)
+    where customerid = p_id;
 
 	return 'EXITO: El registro fue modificado correctamente.';
-
+--nullif me devuelve null cuando le paso ' ' al modificar si el campo vino vacio
 end if;
 
 end;

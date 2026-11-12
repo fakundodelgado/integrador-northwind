@@ -35,8 +35,8 @@ public class VentanaSec extends JFrame {
 	private JTextField textField_8;
 	private JTextField textField_9;
 	private JTextField textField_10;
-
-	
+	private JComboBox<String> comboBox;
+	private JButton btnCargar;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -67,40 +67,46 @@ public class VentanaSec extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox<>();
 		comboBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				// Asegurarse de que el evento corresponde al elemento seleccionado
+		    public void itemStateChanged(ItemEvent e) {
+		        // Asegurarse de que el evento corresponde al elemento seleccionado
 		        if (e.getStateChange() == ItemEvent.SELECTED) {
 		            String opcionSeleccionada = (String) comboBox.getSelectedItem();
-		            
-		         // Comprobación de condición
+
+		            // Comprobación de condición
 		            if ("B".equals(opcionSeleccionada)) {
 		                textField_2.setEnabled(false);   // Deshabilita el campo de texto
-		                textField_3.setEnabled(false); 
-		                textField_4.setEnabled(false); 
-		                textField_5.setEnabled(false); 
-		                textField_6.setEnabled(false); 
-		                textField_7.setEnabled(false); 
-		                textField_8.setEnabled(false); 
-		                textField_9.setEnabled(false); 
-		                textField_10.setEnabled(false); 
-		                textField_11.setEnabled(false); 
+		                textField_3.setEnabled(false);
+		                textField_4.setEnabled(false);
+		                textField_5.setEnabled(false);
+		                textField_6.setEnabled(false);
+		                textField_7.setEnabled(false);
+		                textField_8.setEnabled(false);
+		                textField_9.setEnabled(false);
+		                textField_10.setEnabled(false);
+		                textField_11.setEnabled(false);
+		                btnCargar.setText("Eliminar");
 		            } else {
-		            	 textField_2.setEnabled(true);   // Habilita el campo de texto
-			             textField_3.setEnabled(true); 
-			             textField_4.setEnabled(true); 
-			             textField_5.setEnabled(true); 
-			             textField_6.setEnabled(true); 
-			             textField_7.setEnabled(true); 
-			             textField_8.setEnabled(true); 
-			             textField_9.setEnabled(true); 
-			             textField_10.setEnabled(true); 
-			             textField_11.setEnabled(true); 
+		                textField_2.setEnabled(true);    // Habilita el campo de texto
+		                textField_3.setEnabled(true);
+		                textField_4.setEnabled(true);
+		                textField_5.setEnabled(true);
+		                textField_6.setEnabled(true);
+		                textField_7.setEnabled(true);
+		                textField_8.setEnabled(true);
+		                textField_9.setEnabled(true);
+		                textField_10.setEnabled(true);
+		                textField_11.setEnabled(true);
+
+		                if ("M".equals(opcionSeleccionada)) {
+		                    btnCargar.setText("Modificar");
+		                } else {
+		                    btnCargar.setText("Cargar");
+		                }
 		            }
-		            
-		        }    
-			}
+		        }
+		    }
 		});
 		
 		JLabel lblAccionaB = new JLabel("Accion:  ");
@@ -321,7 +327,7 @@ public class VentanaSec extends JFrame {
 		gbc_lblFax.gridy = 11;
 		contentPane.add(lblFax, gbc_lblFax);
 		
-		JButton btnCargar = new JButton("Cargar");
+		btnCargar = new JButton("Cargar");
 		btnCargar.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		        Operador op = new Operador();
@@ -350,6 +356,7 @@ public class VentanaSec extends JFrame {
 		                "Operación Exitosa", 
 		                JOptionPane.INFORMATION_MESSAGE
 		            );
+		            limpiarCampos();
 
 		        } catch (SQLException ex) {
 		            // Ataja cualquier RAISE EXCEPTION de PL/pgSQL
@@ -376,6 +383,29 @@ public class VentanaSec extends JFrame {
 		gbc_btnCargar.gridx = 4;
 		gbc_btnCargar.gridy = 12;
 		contentPane.add(btnCargar, gbc_btnCargar);
+		
+		JButton btnCancelar = new JButton("Cancelar");
+		btnCancelar.addActionListener(e -> dispose());
+		GridBagConstraints gbc_btnCancelar = new GridBagConstraints();
+		gbc_btnCancelar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnCancelar.insets = new Insets(0, 0, 0, 5);
+		gbc_btnCancelar.gridx = 2;
+		gbc_btnCancelar.gridy = 12;
+		contentPane.add(btnCancelar, gbc_btnCancelar);
 
+	}
+	private void limpiarCampos() {
+	    textField_1.setText("");
+	    textField_2.setText("");
+	    textField_3.setText("");
+	    textField_4.setText("");
+	    textField_5.setText("");
+	    textField_6.setText("");
+	    textField_7.setText("");
+	    textField_8.setText("");
+	    textField_9.setText("");
+	    textField_10.setText("");
+	    textField_11.setText("");
+	    comboBox.setSelectedItem("A");
 	}
 }

@@ -21,7 +21,7 @@ public class Conexion {
 		 */
 		
 		private static final String usuario = "postgres";
-		private static final String contrasena = "123456789";
+		private static final String contrasena = "123456789";/*admin_1234*/
 		
 		/*
 		 * Ahora dado que una conexion puede fallar lo que hacemos es armar un try catch donde intentaremos establecer la conexion y guardarla
