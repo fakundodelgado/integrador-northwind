@@ -1,4 +1,4 @@
-package ar.edu.unsa.pabd;
+package aplicacion;
 
 import java.awt.EventQueue;
 
