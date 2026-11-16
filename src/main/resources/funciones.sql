@@ -1,3 +1,5 @@
+-- FUNCION PARA REALIZAR ALTA, BAJA O MODIFICACIÓN SOBRE LA TABLA CUSTOMERS
+
 create or replace function fn_abm_cliente(
 	p_accion text,
 	p_id text,
@@ -215,3 +217,130 @@ end if;
 end;
 
 $$ language plpgsql;
+
+-- FUNCION PARA CONSULTAR LA VISTA DE ORDENES
+
+-- Lo formatee asi porque DBeaver hace cualquier cosa y era dificil de leer...
+create 
+or 
+replace
+function 
+fn_consulta_ordenes(p_cliente text, p_empleado text) 
+returns 
+table 
+(
+cliente_id varchar(5),
+cliente_contacto varchar(30),
+orden_id integer,
+orden_fecha date,
+orden_cantidad_items bigint,
+orden_importe_total numeric,
+empleado_id integer,
+empleado_nombre varchar
+) as $$
+
+declare 
+cliente text;
+empleado text;
+
+begin
+cliente := trim(p_cliente);
+empleado := trim(p_empleado);
+
+return 
+query 
+select
+vo.cliente_id,
+vo.cliente_contacto,
+vo.orden_id,
+vo.orden_fecha,
+vo.orden_cantidad_items,
+vo.orden_importe_total,
+vo.empleado_id,
+vo.empleado_nombre::varchar -- Hay que castear sino da un error, al parecer al concatenar los nombres del empleado no devuelve varchar aunque ambas columnas lo sean.
+from
+vista_ordenes vo
+where
+coalesce(vo.cliente_contacto, '') ilike '%' || cliente || '%'
+and 
+coalesce(vo.empleado_nombre, '') ilike '%' || empleado || '%' 
+order by 
+vo.orden_id ;
+
+return;
+end;
+
+$$ language plpgsql;
+
+-- Comprobar que filtra adecuadamente
+select * from fn_consulta_ordenes('Maria', 'Suya');
+
+-- FUNCION PARA CONSULTAR LA VISTA CLIENTES
+
+-- Lo formatee asi porque DBeaver hace cualquier cosa y era dificil de leer...
+create 
+or 
+replace
+function 
+fn_consulta_clientes(p_nombre text, p_lugar text) 
+returns 
+table 
+(
+id varchar(5),
+nombre_de_compania varchar(40),
+nombre_de_contacto varchar(30),
+pais varchar(15),
+ciudad varchar(15),
+direccion varchar(60),
+ordenes_registradas bigint,
+total_gastado numeric
+) as $$
+
+declare
+nombre text;
+lugar text;
+
+begin	
+nombre := trim(p_nombre);
+lugar := trim(p_lugar);
+
+return 
+query
+select
+vc.id,
+vc.nombre_de_compania,
+vc.nombre_de_contacto,
+vc.pais,
+vc.ciudad,
+vc.direccion,
+vc.ordenes_registradas,
+vc.total_gastado
+from
+vista_clientes vc
+where
+(
+coalesce(vc.nombre_de_compania, '') ilike '%' || nombre || '%'
+or 
+coalesce(vc.nombre_de_contacto, '') ilike '%' || nombre || '%'
+)
+and
+(
+coalesce(vc.pais, '') ilike '%' || lugar || '%'
+or 
+coalesce(vc.ciudad, '') ilike '%' || lugar || '%'
+or 
+coalesce(vc.direccion, '') ilike '%' || lugar || '%'
+)
+order by
+vc.id;
+
+return;
+end;
+
+$$ language plpgsql;
+
+select * from customers;
+
+-- Comprobar que filtra adecuadamente
+select * from fn_consulta_clientes('Maria', '');
+
