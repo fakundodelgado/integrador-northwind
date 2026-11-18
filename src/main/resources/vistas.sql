@@ -1,5 +1,3 @@
--- PRIMERA OPCION
-
 -- Vista centrada en ordenes
 create or replace
 view vista_ordenes as 
@@ -28,8 +26,6 @@ order by
 -- Probar la vista
 select * from vista_ordenes;
 
--- SEGUNDA OPCION
-
 -- Vista centrada en clientes
 create or replace
 view vista_clientes as
@@ -41,12 +37,12 @@ select
 	c.city as ciudad,
 	c.address as direccion,
 	count(distinct o.orderid) as ordenes_registradas,
-	round(sum(o2.quantity * o2.unitprice - (1-o2.discount / 100.00))::numeric, 2) as total_gastado
+	coalesce(round(sum(o2.quantity * o2.unitprice - (1-o2.discount / 100.00))::numeric, 2), 0) as total_gastado
 from
 	customers c
-inner join orders o
+left join orders o
 		using (customerid)
-inner join orderdetails o2
+left join orderdetails o2
 		using (orderid)
 group by 
 	c.customerid
