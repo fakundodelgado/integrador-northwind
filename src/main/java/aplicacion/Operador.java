@@ -1,9 +1,12 @@
 package aplicacion;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import javax.swing.table.DefaultTableModel;
 
 public class Operador {
 
@@ -60,5 +63,96 @@ public class Operador {
 		}
 		
 	}
+	
+	
+	//-----------------------NUEVO-------------------------------------	
+	
+	/*
+	 * DefaultTableModel es una clase de Java (paquete javax.swing.table) que actúa como 
+	 * el modelo de datos predeterminado para un componente JTable en interfaces gráficas Swing.
+	 * Separa los datos de la interfaz visual: mientras que JTable se encarga de dibujar la tabla en la 
+	 * pantalla, DefaultTableModel se encarga de almacenar, organizar y manipular la información que hay 
+	 * dentro de ella (filas y columnas).
+	 */
+
+	public DefaultTableModel consulta_ord(String cliente, String empleado) throws SQLException {
+        // Definimos las columnas de la tabla, aqui meteremos los datos
+        String[] columnas = {"Cliente_id", "cliente_contacto", "orden_id", "orden_fecha", "orden_cantidad_items","orden_importe_total","empleado_id","empleado_nombre"};
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Evita que el usuario edite las celdas directamente
+            }
+        };
+        
+        String sql = "select * from fn_consulta_ordenes(?, ?)";
+        
+        try (Connection con = Conexion.getConexion();
+        	PreparedStatement ps = con.prepareStatement(sql)) {
+
+            // Pasamos los dos parámetros
+            ps.setString(1, cliente);
+            ps.setString(2, empleado);
+
+            // Ejecutamos y recorremos los resultados
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object[] fila = {
+                    	rs.getString("Cliente_id"),
+                    	rs.getString("cliente_contacto"),
+                    	rs.getInt("orden_id"),
+                    	rs.getDate("orden_fecha"),
+                    	rs.getFloat("orden_cantidad_items"),
+                    	rs.getFloat("orden_importe_total"),
+                        rs.getInt("empleado_id"),
+                        rs.getString("empleado_nombre")
+                    };
+                    modelo.addRow(fila);
+                }
+            }
+        }
+        return modelo;
+    }
+	
+	
+	public DefaultTableModel consulta_cli(String cliente, String empleado) throws SQLException {
+        // Definimos las columnas de la tabla, aqui meteremos los datos
+        String[] columnas = {"id", "nombre_de_compania", "nombre_de_contacto ", "pais", "ciudad","direccion","ordenes_registradas","total_gastado"};
+        DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Evita que el usuario edite las celdas directamente
+            }
+        };
+        
+        String sql = "select * from fn_consulta_clientes(?, ?)";
+        
+        try (Connection con = Conexion.getConexion();
+        	PreparedStatement ps = con.prepareStatement(sql)) {
+
+            // Pasamos los dos parámetros
+            ps.setString(1, cliente);
+            ps.setString(2, empleado);
+
+            // Ejecutamos y recorremos los resultados
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object[] fila = {
+                    	rs.getString("id"),
+                    	rs.getString("nombre_de_compania"),
+                    	rs.getString("nombre_de_contacto"),
+                    	rs.getString("pais"),
+                    	rs.getString("ciudad"),
+                    	rs.getString("direccion"),
+                        rs.getInt("ordenes_registradas"),
+                        rs.getFloat("total_gastado")
+                    };
+                    modelo.addRow(fila);
+                }
+            }
+        }
+        return modelo;
+    }
+	
 	
 }

@@ -55,8 +55,9 @@ public class VentanaSec extends JFrame {
 	 
 	public VentanaSec() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
-		setSize(500,400);
+		setSize(656, 352); 
+	    setResizable(false);
+		setSize(656,374);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -133,7 +134,7 @@ public class VentanaSec extends JFrame {
 		gbc_lblAAlta.gridy = 0;
 		contentPane.add(lblAAlta, gbc_lblAAlta);
 		
-		JLabel lblId = new JLabel("ID: ");
+		JLabel lblId = new JLabel("ID del cliente: ");
 		GridBagConstraints gbc_lblId = new GridBagConstraints();
 		gbc_lblId.anchor = GridBagConstraints.WEST;
 		gbc_lblId.insets = new Insets(0, 0, 5, 5);
@@ -158,7 +159,7 @@ public class VentanaSec extends JFrame {
 		gbc_lblBBaja.gridy = 1;
 		contentPane.add(lblBBaja, gbc_lblBBaja);
 		
-		JLabel lblNombre = new JLabel("Nombre: ");
+		JLabel lblNombre = new JLabel("Nombre de la compañia: ");
 		GridBagConstraints gbc_lblNombre = new GridBagConstraints();
 		gbc_lblNombre.anchor = GridBagConstraints.WEST;
 		gbc_lblNombre.insets = new Insets(0, 0, 5, 5);
@@ -183,7 +184,7 @@ public class VentanaSec extends JFrame {
 		gbc_lblMModificacion.gridy = 2;
 		contentPane.add(lblMModificacion, gbc_lblMModificacion);
 		
-		JLabel lblContacto = new JLabel("Contacto: ");
+		JLabel lblContacto = new JLabel("Nombre de contacto: ");
 		GridBagConstraints gbc_lblContacto = new GridBagConstraints();
 		gbc_lblContacto.anchor = GridBagConstraints.WEST;
 		gbc_lblContacto.insets = new Insets(0, 0, 5, 5);
@@ -200,7 +201,7 @@ public class VentanaSec extends JFrame {
 		contentPane.add(textField_3, gbc_textField_3);
 		textField_3.setColumns(10);
 		
-		JLabel lblTitulo = new JLabel("Titulo: ");
+		JLabel lblTitulo = new JLabel("Titulo de contacto: ");
 		GridBagConstraints gbc_lblTitulo = new GridBagConstraints();
 		gbc_lblTitulo.insets = new Insets(0, 0, 5, 5);
 		gbc_lblTitulo.anchor = GridBagConstraints.WEST;
@@ -319,14 +320,6 @@ public class VentanaSec extends JFrame {
 		contentPane.add(textField_9, gbc_textField_9);
 		textField_9.setColumns(10);
 		
-		JLabel lblFax = new JLabel("Fax: ");
-		GridBagConstraints gbc_lblFax = new GridBagConstraints();
-		gbc_lblFax.anchor = GridBagConstraints.WEST;
-		gbc_lblFax.insets = new Insets(0, 0, 5, 5);
-		gbc_lblFax.gridx = 1;
-		gbc_lblFax.gridy = 11;
-		contentPane.add(lblFax, gbc_lblFax);
-		
 		btnCargar = new JButton("Cargar");
 		btnCargar.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
@@ -369,6 +362,20 @@ public class VentanaSec extends JFrame {
 		        }
 		    }
 		});
+		GridBagConstraints gbc_btnCargar = new GridBagConstraints();
+		gbc_btnCargar.insets = new Insets(0, 0, 5, 0);
+		gbc_btnCargar.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnCargar.gridx = 4;
+		gbc_btnCargar.gridy = 10;
+		contentPane.add(btnCargar, gbc_btnCargar);
+		
+		JLabel lblFax = new JLabel("Fax: ");
+		GridBagConstraints gbc_lblFax = new GridBagConstraints();
+		gbc_lblFax.anchor = GridBagConstraints.WEST;
+		gbc_lblFax.insets = new Insets(0, 0, 5, 5);
+		gbc_lblFax.gridx = 1;
+		gbc_lblFax.gridy = 11;
+		contentPane.add(lblFax, gbc_lblFax);
 		
 		textField_10 = new JTextField();
 		GridBagConstraints gbc_textField_10 = new GridBagConstraints();
@@ -378,19 +385,14 @@ public class VentanaSec extends JFrame {
 		gbc_textField_10.gridy = 11;
 		contentPane.add(textField_10, gbc_textField_10);
 		textField_10.setColumns(10);
-		GridBagConstraints gbc_btnCargar = new GridBagConstraints();
-		gbc_btnCargar.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnCargar.gridx = 4;
-		gbc_btnCargar.gridy = 12;
-		contentPane.add(btnCargar, gbc_btnCargar);
 		
-		JButton btnCancelar = new JButton("Cancelar");
+		JButton btnCancelar = new JButton("Cerrar");
 		btnCancelar.addActionListener(e -> dispose());
 		GridBagConstraints gbc_btnCancelar = new GridBagConstraints();
+		gbc_btnCancelar.insets = new Insets(0, 0, 5, 0);
 		gbc_btnCancelar.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnCancelar.insets = new Insets(0, 0, 0, 5);
-		gbc_btnCancelar.gridx = 2;
-		gbc_btnCancelar.gridy = 12;
+		gbc_btnCancelar.gridx = 4;
+		gbc_btnCancelar.gridy = 11;
 		contentPane.add(btnCancelar, gbc_btnCancelar);
 
 	}

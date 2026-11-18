@@ -14,7 +14,7 @@ public class Conexion {
 		 * - La cuarta: La base de datos que vamos a usar.
 		 */
 		
-		private static final String url = "jdbc:postgresql://localhost:5432/northwind";
+		private static final String url = "jdbc:postgresql://localhost:5432/proyecto_northwind";
 		
 		/*
 		 * Luego debo tener mi usuario y contraseña listos para poder acceder a la base de datos.
