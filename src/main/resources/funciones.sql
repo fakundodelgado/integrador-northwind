@@ -18,93 +18,111 @@ create or replace function fn_abm_cliente(
 begin
 		
 if (p_accion is null) then 
-    raise exception 'ERROR: No se ingreso una accion a realizar';
+    raise exception 'No se ingreso una accion a realizar';
 elseif (p_accion not in ('A', 'B', 'M')) then
-    raise exception 'ERROR: La accion ingresada no es valida';
+    raise exception 'La accion ingresada no es valida';
 end if;
 
 -- bloque para la alta
 if (p_accion = 'A') then
 
-    if (p_id is null or p_id !~ '^[A-Za-z]+$' or length(p_id) != 5) then 
-        raise exception 'ERROR: El customerid ingresado no es valido';
+    if (p_id is null or p_id !~ '^[A-Z]+$' or length(p_id) != 5) then 
+        raise exception 'El id ingresado no es valido';
     elseif (exists (select 1 from customers where customerid = p_id)) then
-        raise exception 'ERROR: El customerid ya se encuentra registrado';
+        raise exception 'El cliente ya se encuentra registrado';
     end if;
 
     if p_companyname is not null and length(trim(p_companyname)) > 0 then
         if length(p_companyname) > 40 then
-            raise exception 'ERROR: El nombre de la empresa no puede superar los 40 caracteres.';
+            raise exception 'El nombre de la empresa no puede superar los 40 caracteres.';
         end if;
     end if;
     
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
         if length(p_contactname) > 30 then
-            raise exception 'ERROR: El nombre de contacto no puede superar los 30 caracteres.';
+            raise exception 'El nombre de contacto no puede superar los 30 caracteres.';
         elseif (p_contactname !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: El nombre de contacto solo debe contener caracteres y espacios';
+            raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
         if length(p_contacttitle) > 30 then
-            raise exception 'ERROR: El titulo de contacto no puede superar los 30 caracteres.';
+            raise exception 'El titulo de contacto no puede superar los 30 caracteres.';
+        elseif (p_contacttitle !~ '^[A-Za-z ]+$') then
+            raise exception 'El titulo de contacto solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_address is not null and length(trim(p_address)) > 0 then
         if length(p_address) > 60 then
-            raise exception 'ERROR: La direccion no puede superar los 60 caracteres.';
+            raise exception 'La direccion no puede superar los 60 caracteres.';
         end if;
     end if;
     
     if p_city is not null and length(trim(p_city)) > 0 then
         if length(p_city) > 15 then
-            raise exception 'ERROR: La ciudad no puede superar los 15 caracteres.';
+            raise exception 'La ciudad no puede superar los 15 caracteres.';
+        elseif (p_city !~ '^[A-Za-z ]+$') then
+            raise exception 'El nombre de la ciudad solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_region is not null and length(trim(p_region)) > 0 then
         if length(p_region) > 15 then
-            raise exception 'ERROR: La region no puede superar los 15 caracteres.';
+            raise exception 'La region no puede superar los 15 caracteres.';
         elseif (p_region !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: La region solo debe contener caracteres y espacios';
+            raise exception 'La region solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_postalcode is not null and length(trim(p_postalcode)) > 0 then
         if length(p_postalcode) > 10 then
-            raise exception 'ERROR: El codigo postal no puede superar los 10 caracteres.';
+            raise exception 'El codigo postal no puede superar los 10 caracteres.';
         end if;
     end if;
     
     if p_country is not null and length(trim(p_country)) > 0 then
         if length(p_country) > 15 then
-            raise exception 'ERROR: El pais no puede superar los 15 caracteres.';
+            raise exception 'El pais no puede superar los 15 caracteres.';
         elseif (p_country !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: El pais solo debe contener caracteres y espacios';
+            raise exception 'El pais solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_phone is not null and length(trim(p_phone)) > 0 then
         if length(p_phone) > 24 then
-            raise exception 'ERROR: El telefono no puede superar los 24 caracteres.';
-        end if;
+            raise exception 'El telefono no puede superar los 24 caracteres.';
+        elseif p_phone !~ '^[0-9\s\+\-\(\)\.]+$' then
+        	raise exception 'El telefono solo debe contener números, espacios y los símbolos +, -, (), .';
+    	end if;
     end if;
     
     if p_fax is not null and length(trim(p_fax)) > 0 then
         if length(p_fax) > 24 then
-            raise exception 'ERROR: El fax no puede superar los 24 caracteres.';
-        end if;
+            raise exception 'El fax no puede superar los 24 caracteres.';
+        elseif p_fax !~ '^[0-9\s\+\-\(\)\.]+$' then
+        	raise exception 'El fax solo debe contener números, espacios y los símbolos +, -, (), .';
+    	end if;
     end if;
 
+	-- Actualizado para que guarde nulls en caso de que se dejen los campos vacios
 	insert into customers (
     customerid, companyname, contactname, contacttitle, 
     address, city, region, postalcode, country, phone, fax
 	) 
 	values (
-    p_id, p_companyname, p_contactname, p_contacttitle, 
-    p_address, p_city, p_region, p_postalcode, p_country, p_phone, p_fax
+	nullif(trim(p_id), ''), 
+    nullif(trim(p_companyname), ''), 
+    nullif(trim(p_contactname), ''), 
+    nullif(trim(p_contacttitle), ''), 
+    nullif(trim(p_address), ''), 
+    nullif(trim(p_city), ''), 
+    nullif(trim(p_region), ''), 
+    nullif(trim(p_postalcode), ''), 
+    nullif(trim(p_country), ''), 
+    nullif(trim(p_phone), ''), 
+    nullif(trim(p_fax), '')
 	);
 
 	return 'EXITO: El registro fue creado correctamente.';
@@ -112,11 +130,11 @@ if (p_accion = 'A') then
 elseif(p_accion = 'B') then
 	
 	if (p_id is null or p_id !~ '^[A-Za-z]+$' or length(p_id) != 5) then 
-        raise exception 'ERROR: El customerid ingresado no es valido';
-    end if;
-
-	if (not exists (select 1 from customers where customerid = p_id)) then
-		raise exception 'ERROR: El registro no existe.';
+        raise exception 'El id ingresado no es valido';
+    elseif (not exists (select 1 from customers where customerid = p_id)) then
+		raise exception 'El cliente no existe.';
+	elseif (exists (select 1 from orders where customerid = p_id )) then
+		raise exception 'No se puede eliminar el cliente porque tiene ordenes asociadas.';
 	end if;
 	
 	delete from customers where customerid = p_id;
@@ -125,78 +143,90 @@ elseif(p_accion = 'B') then
 
 else 
 	
-	if (p_id is null or p_id !~ '^[A-Za-z]+$' or length(p_id) != 5) then 
-        raise exception 'ERROR: El customerid ingresado no es valido';
+	if (p_id is null or p_id !~ '^[A-Z]+$' or length(p_id) != 5) then 
+        raise exception 'El id ingresado no es valido';
 	elseif (not exists (select 1 from customers where customerid = p_id)) then
-    	raise exception 'ERROR: El cliente no se encuentra registrado.';
-    end if;
+    	raise exception 'El cliente no se encuentra registrado.';
+    elseif (exists (select 1 from orders where customerid = p_id )) then
+		raise exception 'No se puede actualizar el id porque el cliente tiene ordenes asociadas.';
+	end if;
 
     if p_companyname is not null and length(trim(p_companyname)) > 0 then
         if length(p_companyname) > 40 then
-            raise exception 'ERROR: El nombre de la empresa no puede superar los 40 caracteres.';
+            raise exception 'El nombre de la empresa no puede superar los 40 caracteres.';
         end if;
     end if;
     
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
         if length(p_contactname) > 30 then
-            raise exception 'ERROR: El nombre de contacto no puede superar los 30 caracteres.';
+            raise exception 'El nombre de contacto no puede superar los 30 caracteres.';
         elseif (p_contactname !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: El nombre de contacto solo debe contener caracteres y espacios';
+            raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
         if length(p_contacttitle) > 30 then
-            raise exception 'ERROR: El titulo de contacto no puede superar los 30 caracteres.';
+            raise exception 'El titulo de contacto no puede superar los 30 caracteres.';
+        elseif (p_contacttitle !~ '^[A-Za-z ]+$') then
+            raise exception 'El titulo de contacto solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_address is not null and length(trim(p_address)) > 0 then
         if length(p_address) > 60 then
-            raise exception 'ERROR: La direccion no puede superar los 60 caracteres.';
+            raise exception 'La direccion no puede superar los 60 caracteres.';
         end if;
     end if;
     
     if p_city is not null and length(trim(p_city)) > 0 then
         if length(p_city) > 15 then
-            raise exception 'ERROR: La ciudad no puede superar los 15 caracteres.';
+            raise exception 'La ciudad no puede superar los 15 caracteres.';
+        elseif (p_city !~ '^[A-Za-z ]+$') then
+            raise exception 'El nombre de la ciudad solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_region is not null and length(trim(p_region)) > 0 then
         if length(p_region) > 15 then
-            raise exception 'ERROR: La region no puede superar los 15 caracteres.';
+            raise exception 'La region no puede superar los 15 caracteres.';
         elseif (p_region !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: La region solo debe contener caracteres y espacios';
+            raise exception 'La region solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_postalcode is not null and length(trim(p_postalcode)) > 0 then
         if length(p_postalcode) > 10 then
-            raise exception 'ERROR: El codigo postal no puede superar los 10 caracteres.';
+            raise exception 'El codigo postal no puede superar los 10 caracteres.';
         end if;
     end if;
     
     if p_country is not null and length(trim(p_country)) > 0 then
         if length(p_country) > 15 then
-            raise exception 'ERROR: El pais no puede superar los 15 caracteres.';
+            raise exception 'El pais no puede superar los 15 caracteres.';
         elseif (p_country !~ '^[A-Za-z ]+$') then
-            raise exception 'ERROR: El pais solo debe contener caracteres y espacios';
+            raise exception 'El pais solo debe contener caracteres y espacios';
         end if;
     end if;
     
     if p_phone is not null and length(trim(p_phone)) > 0 then
         if length(p_phone) > 24 then
-            raise exception 'ERROR: El telefono no puede superar los 24 caracteres.';
-        end if;
+            raise exception 'El telefono no puede superar los 24 caracteres.';
+        elseif p_phone !~ '^[0-9\s\+\-\(\)\.]+$' then
+        	raise exception 'El telefono contiene caracteres inválidos. Solo se permiten números, espacios y los símbolos +, -, (), .';
+    	end if;
     end if;
     
     if p_fax is not null and length(trim(p_fax)) > 0 then
         if length(p_fax) > 24 then
-            raise exception 'ERROR: El fax no puede superar los 24 caracteres.';
-        end if;
+            raise exception 'El fax no puede superar los 24 caracteres.';
+        elseif p_fax !~ '^[0-9\s\+\-\(\)\.]+$' then
+        	raise exception 'El fax contiene caracteres inválidos. Solo se permiten números, espacios y los símbolos +, -, (), .';
+    	end if;
     end if;
 	
+	-- Si no se completan los campos nos quedamos con el valor ya existente
+	-- nullif me devuelve null cuando le paso ' ' al modificar si el campo vino vacio
 	update customers set 
     companyname = coalesce(nullif(trim(p_companyname), ''),companyname), 
     contactname = coalesce(nullif(trim(p_contactname), ''),contactname), 
@@ -211,7 +241,7 @@ else
     where customerid = p_id;
 
 	return 'EXITO: El registro fue modificado correctamente.';
---nullif me devuelve null cuando le paso ' ' al modificar si el campo vino vacio
+
 end if;
 
 end;
@@ -343,4 +373,3 @@ select * from customers;
 
 -- Comprobar que filtra adecuadamente
 select * from fn_consulta_clientes('Maria', '');
-
