@@ -129,7 +129,7 @@ if (p_accion = 'A') then
 
 elseif(p_accion = 'B') then
 	
-	if (p_id is null or p_id !~ '^[A-Za-z]+$' or length(p_id) != 5) then 
+	if (p_id is null or p_id !~ '^[A-Z]+$' or length(p_id) != 5) then 
         raise exception 'El id ingresado no es valido';
     elseif (not exists (select 1 from customers where customerid = p_id)) then
 		raise exception 'El cliente no existe.';
