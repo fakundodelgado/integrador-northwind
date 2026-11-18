@@ -102,7 +102,7 @@ public class Operador {
                     	rs.getString("cliente_contacto"),
                     	rs.getInt("orden_id"),
                     	rs.getDate("orden_fecha"),
-                    	rs.getFloat("orden_cantidad_items"),
+                    	rs.getInt("orden_cantidad_items"),
                     	rs.getFloat("orden_importe_total"),
                         rs.getInt("empleado_id"),
                         rs.getString("empleado_nombre")

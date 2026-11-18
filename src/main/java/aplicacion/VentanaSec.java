@@ -353,9 +353,10 @@ public class VentanaSec extends JFrame {
 
 		        } catch (SQLException ex) {
 		            // Ataja cualquier RAISE EXCEPTION de PL/pgSQL
+		        	String mensaje = ex.getMessage().split("\n")[0];
 		            JOptionPane.showMessageDialog(
 		                VentanaSec.this, 
-		                ex.getMessage(), 
+		                mensaje, 
 		                "Error en la Base de Datos", 
 		                JOptionPane.ERROR_MESSAGE
 		            );
