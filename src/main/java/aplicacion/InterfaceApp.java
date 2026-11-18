@@ -37,6 +37,7 @@ public class InterfaceApp extends JFrame {
 	private JTextField textField_2;
 	private JComboBox<String> comboBox;//---------->NUEVO
 	private JTable table;  //------------->NUEVO
+	private VentanaSec ventanaSec = null;
 
 	/**
 	 * Launch the application.
@@ -198,9 +199,15 @@ public class InterfaceApp extends JFrame {
 		JButton btnCargar = new JButton("ABM");
 		btnCargar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				VentanaSec frame = new VentanaSec();
-				frame.setVisible(true);
+				// Verifica si la ventana no existe o ya fue cerrada
+		        if (ventanaSec == null || !ventanaSec.isVisible()) {
+		            ventanaSec = new VentanaSec();
+		            ventanaSec.setVisible(true);
+		        } else {
+		            // Si ya está abierta, la trae al frente en lugar de crear otra
+		            ventanaSec.toFront();
+		            ventanaSec.requestFocus();
+		        }
 			}
 		});
 		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
