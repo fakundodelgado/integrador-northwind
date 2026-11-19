@@ -36,6 +36,8 @@ if (p_accion = 'A') then
         if length(p_companyname) > 40 then
             raise exception 'El nombre de la empresa no puede superar los 40 caracteres.';
         end if;
+    else
+    	raise exception 'El nombre de la empresa es obligatorio';
     end if;
     
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
@@ -44,6 +46,8 @@ if (p_accion = 'A') then
         elseif (p_contactname !~ '^[A-Za-z ]+$') then
             raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
+    else
+    	raise exception 'El nombre de contacto es obligatorio';
     end if;
     
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
@@ -80,6 +84,8 @@ if (p_accion = 'A') then
         if length(p_postalcode) > 10 then
             raise exception 'El codigo postal no puede superar los 10 caracteres.';
         end if;
+    else
+    	raise exception 'El codigo postal es obligatorio';
     end if;
     
     if p_country is not null and length(trim(p_country)) > 0 then
@@ -96,6 +102,8 @@ if (p_accion = 'A') then
         elseif p_phone !~ '^[0-9\s\+\-\(\)\.]+$' then
         	raise exception 'El telefono solo debe contener números, espacios y los símbolos +, -, (), .';
     	end if;
+    else
+    	raise exception 'El telefono es obligatorio';
     end if;
     
     if p_fax is not null and length(trim(p_fax)) > 0 then
@@ -112,16 +120,16 @@ if (p_accion = 'A') then
     address, city, region, postalcode, country, phone, fax
 	) 
 	values (
-	nullif(trim(p_id), ''), 
-    nullif(trim(p_companyname), ''), 
-    nullif(trim(p_contactname), ''), 
+	p_id, 
+    trim(p_companyname), 
+    trim(p_contactname), 
     nullif(trim(p_contacttitle), ''), 
     nullif(trim(p_address), ''), 
     nullif(trim(p_city), ''), 
     nullif(trim(p_region), ''), 
-    nullif(trim(p_postalcode), ''), 
+    trim(p_postalcode), 
     nullif(trim(p_country), ''), 
-    nullif(trim(p_phone), ''), 
+    trim(p_phone), 
     nullif(trim(p_fax), '')
 	);
 
@@ -147,14 +155,14 @@ else
         raise exception 'El id ingresado no es valido';
 	elseif (not exists (select 1 from customers where customerid = p_id)) then
     	raise exception 'El cliente no se encuentra registrado.';
-    elseif (exists (select 1 from orders where customerid = p_id )) then
-		raise exception 'No se puede actualizar el id porque el cliente tiene ordenes asociadas.';
-	end if;
+    end if;
 
     if p_companyname is not null and length(trim(p_companyname)) > 0 then
         if length(p_companyname) > 40 then
             raise exception 'El nombre de la empresa no puede superar los 40 caracteres.';
         end if;
+    else
+    	raise exception 'El nombre de la empresa es obligatorio';
     end if;
     
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
@@ -163,6 +171,8 @@ else
         elseif (p_contactname !~ '^[A-Za-z ]+$') then
             raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
+    else
+    	raise exception 'El nombre de contacto es obligatorio';
     end if;
     
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
@@ -199,6 +209,8 @@ else
         if length(p_postalcode) > 10 then
             raise exception 'El codigo postal no puede superar los 10 caracteres.';
         end if;
+    else
+    	raise exception 'El codigo postal es obligatorio';
     end if;
     
     if p_country is not null and length(trim(p_country)) > 0 then
@@ -215,6 +227,8 @@ else
         elseif p_phone !~ '^[0-9\s\+\-\(\)\.]+$' then
         	raise exception 'El telefono contiene caracteres inválidos. Solo se permiten números, espacios y los símbolos +, -, (), .';
     	end if;
+    else
+    	raise exception 'El telefono es obligatorio';
     end if;
     
     if p_fax is not null and length(trim(p_fax)) > 0 then
@@ -225,19 +239,20 @@ else
     	end if;
     end if;
 	
-	-- Si no se completan los campos nos quedamos con el valor ya existente
+	-- Si no se completan los campos nos quedamos con el valor ya existente (se autocompletaran al momento de actualizar asi el usuario sabe cuales son los datos actuales)
 	-- nullif me devuelve null cuando le paso ' ' al modificar si el campo vino vacio
+	-- Los campos obligatorios estaran protegidos por condiciones
 	update customers set 
-    companyname = coalesce(nullif(trim(p_companyname), ''),companyname), 
-    contactname = coalesce(nullif(trim(p_contactname), ''),contactname), 
-    contacttitle = coalesce(nullif(trim(p_contacttitle), ''),contacttitle), 
-    address = coalesce(nullif(trim(p_address), ''),address), 
-    city = coalesce(nullif(trim(p_city), ''),city), 
-    region = coalesce(nullif(trim(p_region), ''),region), 
-    postalcode = coalesce(nullif(trim(p_postalcode), ''),postalcode), 
-    country = coalesce(nullif(trim(p_country), ''),country), 
-    phone = coalesce(nullif(trim(p_phone), ''),phone), 
-    fax = coalesce(nullif(trim(p_fax), ''),fax)
+    companyname = trim(p_companyname), 
+    contactname = trim(p_contactname), 
+    contacttitle = nullif(trim(p_contacttitle), ''), 
+    address = nullif(trim(p_address), ''), 
+    city = nullif(trim(p_city), ''), 
+    region = nullif(trim(p_region), ''), 
+    postalcode = trim(p_postalcode), 
+    country = nullif(trim(p_country), ''), 
+    phone = trim(p_phone), 
+    fax = nullif(trim(p_fax), '')
     where customerid = p_id;
 
 	return 'EXITO: El registro fue modificado correctamente.';
@@ -303,7 +318,7 @@ end;
 $$ language plpgsql;
 
 -- Comprobar que filtra adecuadamente
-select * from fn_consulta_ordenes('Maria', 'Suya');
+--select * from fn_consulta_ordenes('Maria', 'Suya');
 
 -- FUNCION PARA CONSULTAR LA VISTA CLIENTES
 
@@ -372,4 +387,43 @@ $$ language plpgsql;
 select * from customers;
 
 -- Comprobar que filtra adecuadamente
-select * from fn_consulta_clientes('Maria', '');
+-- select * from fn_consulta_clientes('Maria', '');
+
+-- Decidi hacerlo de esta forma para que sea más facil de llamar, sino hay que aclarar la forma del record al costado
+create or replace function fn_datos_cliente(p_id varchar(5)) returns table (out_companyname varchar(40),
+    out_contactname varchar(30),
+    out_contacttitle varchar(30),
+    out_address varchar(60),
+    out_city varchar(15),
+    out_region varchar(15),
+    out_postalcode varchar(10),
+    out_country varchar(15),
+    out_phone varchar(24),
+    out_fax varchar(24)) as $$
+   
+declare
+
+id varchar(5); 
+filas integer;  
+   
+begin
+
+id = upper(trim(p_id));
+    
+return query select companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax from customers where customerid = id;
+
+get diagnostics filas = row_count;
+
+if(filas = 0) then
+	raise exception 'No se encontro el cliente buscado';
+end if;
+
+return;
+
+end;
+
+$$ language plpgsql;
+
+-- Para comparar
+-- select * from fn_datos_cliente('vinet');
+-- select * from customers where customerid = 'VINET';
