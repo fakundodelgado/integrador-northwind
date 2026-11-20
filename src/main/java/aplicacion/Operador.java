@@ -65,7 +65,7 @@ public class Operador {
 	}
 	
 	
-	//-----------------------NUEVO-------------------------------------	
+	
 	
 	/*
 	 * DefaultTableModel es una clase de Java (paquete javax.swing.table) que actúa como 
@@ -77,7 +77,7 @@ public class Operador {
 
 	public DefaultTableModel consulta_ord(String cliente, String empleado) throws SQLException {
         // Definimos las columnas de la tabla, aqui meteremos los datos
-        String[] columnas = {"Cliente_id", "cliente_contacto", "orden_id", "orden_fecha", "orden_cantidad_items","orden_importe_total","empleado_id","empleado_nombre"};
+        String[] columnas = {"Cliente_ID", "Cliente_Contacto", "Orden_ID", "Orden_Fecha", "Orden_Cantidad_Items","Orden_Importe_Total","Empleado_ID","Empleado_Nombre"};
         DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -96,10 +96,11 @@ public class Operador {
 
             // Ejecutamos y recorremos los resultados
             try (ResultSet rs = ps.executeQuery()) {
+            	
                 while (rs.next()) {
                     Object[] fila = {
                     	rs.getString("Cliente_id"),
-                    	rs.getString("cliente_contacto"),
+                    	rs.getString("Cliente_Contacto"),
                     	rs.getInt("orden_id"),
                     	rs.getDate("orden_fecha"),
                     	rs.getInt("orden_cantidad_items"),
@@ -117,7 +118,7 @@ public class Operador {
 	
 	public DefaultTableModel consulta_cli(String cliente, String empleado) throws SQLException {
         // Definimos las columnas de la tabla, aqui meteremos los datos
-        String[] columnas = {"id", "nombre_de_compania", "nombre_de_contacto ", "pais", "ciudad","direccion","ordenes_registradas","total_gastado"};
+        String[] columnas = {"Cliente_ID", "Nombre_de_Compania", "Nombre_de_Contacto ", "Pais", "Ciudad","Dirección","Ordenes_Registradas","Total_Gastado"};
         DefaultTableModel modelo = new DefaultTableModel(null, columnas) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -136,6 +137,7 @@ public class Operador {
 
             // Ejecutamos y recorremos los resultados
             try (ResultSet rs = ps.executeQuery()) {
+            	
                 while (rs.next()) {
                     Object[] fila = {
                     	rs.getString("id"),
@@ -153,6 +155,48 @@ public class Operador {
         }
         return modelo;
     }
+	
+	
+	//-----------------------NUEVO-------------------------------------	
+	
+	public String[] devolver_datos_x_id(String id) throws SQLException{
+		
+		String sql = "select * from fn_datos_cliente(?)";
+		String [] datos_cli = new String [10];
+		try (Connection con = Conexion.getConexion();
+	        	PreparedStatement ps = con.prepareStatement(sql)) {
+
+	            // Pasamos los dos parámetros
+	            ps.setString(1, id);
+	            
+
+	            // Ejecutamos y recorremos los resultados
+	            try (ResultSet rs = ps.executeQuery()) {
+	            	
+	            	if (rs.next()) {
+	            		
+	            		String[] datos = {
+		                    	rs.getString("out_companyname"),
+		                    	rs.getString("out_contactname"),
+		                    	rs.getString("out_contacttitle"),
+		                    	rs.getString("out_address"),
+		                    	rs.getString("out_city"),
+		                    	rs.getString("out_region"),
+		                    	rs.getString("out_postalcode"),
+		                    	rs.getString("out_country"),
+		                    	rs.getString("out_phone"),
+		                    	rs.getString("out_fax")
+		                 };
+	            		
+	            		datos_cli = datos;
+		                
+		            }
+	            		
+	            
+	            }
+	    }
+	    return datos_cli;
+	}
 	
 	
 }

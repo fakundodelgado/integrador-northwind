@@ -28,6 +28,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 public class InterfaceApp extends JFrame {
 
@@ -35,8 +36,8 @@ public class InterfaceApp extends JFrame {
 	private JPanel contentPane;
 	private JTextField textField_1;
 	private JTextField textField_2;
-	private JComboBox<String> comboBox;//---------->NUEVO
-	private JTable table;  //------------->NUEVO
+	private JComboBox<String> comboBox;
+	private JTable table;  
 	private VentanaSec ventanaSec = null;
 
 	/**
@@ -115,7 +116,7 @@ public class InterfaceApp extends JFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				buscarDatos();   //---------->NUEVO
+				buscarDatos();   
 			}
 		});
 		
@@ -140,7 +141,7 @@ public class InterfaceApp extends JFrame {
 		gbc_btnNewButton_1.gridy = 0;
 		panel.add(btnNewButton_1, gbc_btnNewButton_1);
 										
-		JLabel lblVista = new JLabel("Vista: ");   //---------->NUEVO
+		JLabel lblVista = new JLabel("Vista: ");   
 		GridBagConstraints gbc_lblVista = new GridBagConstraints();
 		gbc_lblVista.insets = new Insets(0, 0, 0, 5);
 		gbc_lblVista.anchor = GridBagConstraints.EAST;
@@ -148,7 +149,7 @@ public class InterfaceApp extends JFrame {
 		gbc_lblVista.gridy = 0;
 		panel.add(lblVista, gbc_lblVista);
 										
-		comboBox = new JComboBox();   //------------->NUEVO
+		comboBox = new JComboBox();  
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				// Asegurarse de que el evento corresponde al elemento seleccionado
@@ -213,20 +214,20 @@ public class InterfaceApp extends JFrame {
 		panel_1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		panel_1.add(btnCargar);
 		
-		JScrollPane scrollPane = new JScrollPane();  //------------->NUEVO
-		contentPane.add(scrollPane, BorderLayout.CENTER);
-		
-		JPanel panel_2 = new JPanel();  //------------->NUEVO
-		scrollPane.setViewportView(panel_2);
+		JScrollPane scrollPane = new JScrollPane();  
+		scrollPane.setBounds(20, 70, 550, 250); //------------->NUEVO Ajusta las coordenadas y tamaño a la ventana
+		contentPane.add(scrollPane); //------------->NUEVO
 		
 		table = new JTable();
-		panel_2.add(table);
+		scrollPane.setViewportView(table); //------------->NUEVO
+		//contentPane.add(table, BorderLayout.WEST);
+		table.setFont(new Font("Dialog", Font.PLAIN, 16)); //------------->NUEVO
 		
-		cargarTablaInicial(); //---------->NUEVO
+		cargarTablaInicial(); 
 
 	}
 	
-//-----------------------NUEVO-------------------------------------
+
 	
 	private void cargarTablaInicial() {
         try {

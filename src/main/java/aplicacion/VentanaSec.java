@@ -77,32 +77,18 @@ public class VentanaSec extends JFrame {
 
 		            // Comprobación de condición
 		            if ("B".equals(opcionSeleccionada)) {
-		                textField_2.setEnabled(false);   // Deshabilita el campo de texto
-		                textField_3.setEnabled(false);
-		                textField_4.setEnabled(false);
-		                textField_5.setEnabled(false);
-		                textField_6.setEnabled(false);
-		                textField_7.setEnabled(false);
-		                textField_8.setEnabled(false);
-		                textField_9.setEnabled(false);
-		                textField_10.setEnabled(false);
-		                textField_11.setEnabled(false);
+		            	limpiarCampos();  //--------->NUEVO
+		            	deshabilitarBoxs();  //--------->NUEVO
 		                btnCargar.setText("Eliminar");
 		            } else {
-		                textField_2.setEnabled(true);    // Habilita el campo de texto
-		                textField_3.setEnabled(true);
-		                textField_4.setEnabled(true);
-		                textField_5.setEnabled(true);
-		                textField_6.setEnabled(true);
-		                textField_7.setEnabled(true);
-		                textField_8.setEnabled(true);
-		                textField_9.setEnabled(true);
-		                textField_10.setEnabled(true);
-		                textField_11.setEnabled(true);
-
+		            	
 		                if ("M".equals(opcionSeleccionada)) {
+		                	limpiarCampos();  //--------->NUEVO
+		                	deshabilitarBoxs();  //--------->NUEVO
 		                    btnCargar.setText("Modificar");
 		                } else {
+		                	limpiarCampos();  //--------->NUEVO
+		                	habilitarBoxs();  //--------->NUEVO
 		                    btnCargar.setText("Cargar");
 		                }
 		            }
@@ -143,6 +129,31 @@ public class VentanaSec extends JFrame {
 		contentPane.add(lblId, gbc_lblId);
 		
 		textField_1 = new JTextField();
+		textField_1.addKeyListener(new java.awt.event.KeyAdapter() { //--------->NUEVO
+			@Override
+		    public void keyTyped(java.awt.event.KeyEvent e) {
+		        // No deja pasar mas de 5 caracteres
+		        if (textField_1.getText().length() >= 5) {
+		            e.consume();
+		        }
+		    }
+			
+		    @Override
+		    public void keyReleased(java.awt.event.KeyEvent e) {
+		    	// Me ayuda a ignorar teclas como shift y enter asi no salta el mensaje sin querer
+		    	if (e.getKeyChar() == java.awt.event.KeyEvent.CHAR_UNDEFINED || Character.isISOControl(e.getKeyChar())) {
+		            return;
+		        }
+		    	
+		    	String opcionABM = (String) comboBox.getSelectedItem(),
+		    	id = textField_1.getText().toUpperCase().replace(" ", "");
+		    	
+		        // consulta a la BD cuando se completan los 5 caracteres del ID y el combobox sea M
+		        if (textField_1.isEditable() && id.length() == 5 && "M".equals(opcionABM)) {
+		        	controlar_modif();
+		        } 
+		    }
+		});
 		GridBagConstraints gbc_textField_1 = new GridBagConstraints();
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.insets = new Insets(0, 0, 5, 5);
@@ -397,7 +408,8 @@ public class VentanaSec extends JFrame {
 		contentPane.add(btnCancelar, gbc_btnCancelar);
 
 	}
-	private void limpiarCampos() {
+	
+	private void limpiarCampos() {  //--------->NUEVO solo le quite lo de cambiar a A
 	    textField_1.setText("");
 	    textField_2.setText("");
 	    textField_3.setText("");
@@ -409,6 +421,82 @@ public class VentanaSec extends JFrame {
 	    textField_9.setText("");
 	    textField_10.setText("");
 	    textField_11.setText("");
-	    comboBox.setSelectedItem("A");
 	}
+	
+	private void habilitarBoxs() {  //--------->NUEVO
+		textField_2.setEnabled(true);    
+        textField_3.setEnabled(true);
+        textField_4.setEnabled(true);
+        textField_5.setEnabled(true);
+        textField_6.setEnabled(true);
+        textField_7.setEnabled(true);
+        textField_8.setEnabled(true);
+        textField_9.setEnabled(true);
+        textField_10.setEnabled(true);
+        textField_11.setEnabled(true);
+	}
+	
+	private void deshabilitarBoxs() {   //--------->NUEVO
+		textField_2.setEnabled(false);   
+        textField_3.setEnabled(false);
+        textField_4.setEnabled(false);
+        textField_5.setEnabled(false);
+        textField_6.setEnabled(false);
+        textField_7.setEnabled(false);
+        textField_8.setEnabled(false);
+        textField_9.setEnabled(false);
+        textField_10.setEnabled(false);
+        textField_11.setEnabled(false);
+	}
+	
+	private void controlar_modif() { //--------->NUEVO
+		
+		try {
+			String id = textField_1.getText().toUpperCase().replace(" ", "");
+			
+			Operador op = new Operador();
+			String [] datos = op.devolver_datos_x_id(id);
+			
+			textField_2.setText(datos[0]);
+		    textField_3.setText(datos[1]);
+		    textField_4.setText(datos[2]);
+		    textField_5.setText(datos[3]);
+		    textField_6.setText(datos[5]);
+		    textField_7.setText(datos[6]);
+		    textField_8.setText(datos[7]);
+		    textField_9.setText(datos[8]);
+		    textField_10.setText(datos[9]);
+		    textField_11.setText(datos[4]);
+		    
+		    /*
+		    textField_1.getText(),   // customerid
+            textField_2.getText(),   // companyname
+            textField_3.getText(),   // contactname
+            textField_4.getText(),   // contacttitle
+            textField_5.getText(),   // address
+            textField_11.getText(),  // city
+            textField_6.getText(),   // region
+            textField_7.getText(),   // postalcode
+            textField_8.getText(),   // country
+            textField_9.getText(),   // phone
+            textField_10.getText()   // fax
+		     */
+		    
+		    habilitarBoxs();
+			
+			
+		}catch(SQLException ex){
+            JOptionPane.showMessageDialog(VentanaSec.this, "Error al cargar id: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 }
