@@ -58,7 +58,7 @@ public class Operador {
 	            }
 	        }
 			
-			return "Operación finalizada correctamente.";
+			return "Operación finalizada correctamente."; // Esto esta para que java no moleste basicamente, porque el retun rs.getString(1) capturaria el mensaje de exito, si falla para por el throw
 			
 		}
 		

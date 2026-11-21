@@ -43,7 +43,7 @@ if (p_accion = 'A') then
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
         if length(p_contactname) > 30 then
             raise exception 'El nombre de contacto no puede superar los 30 caracteres.';
-        elseif (p_contactname !~ '^[A-Za-z ]+$') then
+        elseif (p_contactname !~ '^[[:alpha:] ]+$') then
             raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
     else
@@ -53,8 +53,8 @@ if (p_accion = 'A') then
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
         if length(p_contacttitle) > 30 then
             raise exception 'El titulo de contacto no puede superar los 30 caracteres.';
-        elseif (p_contacttitle !~ '^[A-Za-z ]+$') then
-            raise exception 'El titulo de contacto solo debe contener caracteres y espacios';
+        elseif (p_contacttitle !~ '^[[:alpha:] .-]+$') then
+            raise exception 'El titulo de contacto solo debe contener caracteres, espacios, puntos o guiones';
         end if;
     end if;
     
@@ -67,7 +67,7 @@ if (p_accion = 'A') then
     if p_city is not null and length(trim(p_city)) > 0 then
         if length(p_city) > 15 then
             raise exception 'La ciudad no puede superar los 15 caracteres.';
-        elseif (p_city !~ '^[A-Za-z ]+$') then
+        elseif (p_city !~ '^[[:alpha:] ]+$') then
             raise exception 'El nombre de la ciudad solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -75,7 +75,7 @@ if (p_accion = 'A') then
     if p_region is not null and length(trim(p_region)) > 0 then
         if length(p_region) > 15 then
             raise exception 'La region no puede superar los 15 caracteres.';
-        elseif (p_region !~ '^[A-Za-z ]+$') then
+        elseif (p_region !~ '^[[:alpha:] ]+$') then
             raise exception 'La region solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -91,7 +91,7 @@ if (p_accion = 'A') then
     if p_country is not null and length(trim(p_country)) > 0 then
         if length(p_country) > 15 then
             raise exception 'El pais no puede superar los 15 caracteres.';
-        elseif (p_country !~ '^[A-Za-z ]+$') then
+        elseif (p_country !~ '^[[:alpha:] ]+$') then
             raise exception 'El pais solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -168,7 +168,7 @@ else
     if p_contactname is not null and length(trim(p_contactname)) > 0 then
         if length(p_contactname) > 30 then
             raise exception 'El nombre de contacto no puede superar los 30 caracteres.';
-        elseif (p_contactname !~ '^[A-Za-z ]+$') then
+        elseif (p_contactname !~ '^[[:alpha:] ]+$') then
             raise exception 'El nombre de contacto solo debe contener caracteres y espacios';
         end if;
     else
@@ -178,8 +178,8 @@ else
     if p_contacttitle is not null and length(trim(p_contacttitle)) > 0 then
         if length(p_contacttitle) > 30 then
             raise exception 'El titulo de contacto no puede superar los 30 caracteres.';
-        elseif (p_contacttitle !~ '^[A-Za-z ]+$') then
-            raise exception 'El titulo de contacto solo debe contener caracteres y espacios';
+        elseif (p_contacttitle !~ '^[[:alpha:] .-]+$') then
+            raise exception 'El titulo de contacto solo debe contener caracteres, espacios, puntos o guiones';
         end if;
     end if;
     
@@ -192,7 +192,7 @@ else
     if p_city is not null and length(trim(p_city)) > 0 then
         if length(p_city) > 15 then
             raise exception 'La ciudad no puede superar los 15 caracteres.';
-        elseif (p_city !~ '^[A-Za-z ]+$') then
+        elseif (p_city !~ '^[[:alpha:] ]+$') then
             raise exception 'El nombre de la ciudad solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -200,7 +200,7 @@ else
     if p_region is not null and length(trim(p_region)) > 0 then
         if length(p_region) > 15 then
             raise exception 'La region no puede superar los 15 caracteres.';
-        elseif (p_region !~ '^[A-Za-z ]+$') then
+        elseif (p_region !~ '^[[:alpha:] ]+$') then
             raise exception 'La region solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -216,7 +216,7 @@ else
     if p_country is not null and length(trim(p_country)) > 0 then
         if length(p_country) > 15 then
             raise exception 'El pais no puede superar los 15 caracteres.';
-        elseif (p_country !~ '^[A-Za-z ]+$') then
+        elseif (p_country !~ '^[[:alpha:] ]+$') then
             raise exception 'El pais solo debe contener caracteres y espacios';
         end if;
     end if;
@@ -242,6 +242,7 @@ else
 	-- Si no se completan los campos nos quedamos con el valor ya existente (se autocompletaran al momento de actualizar asi el usuario sabe cuales son los datos actuales)
 	-- nullif me devuelve null cuando le paso ' ' al modificar si el campo vino vacio
 	-- Los campos obligatorios estaran protegidos por condiciones
+	
 	update customers set 
     companyname = trim(p_companyname), 
     contactname = trim(p_contactname), 
@@ -263,16 +264,12 @@ end;
 
 $$ language plpgsql;
 
+-- '^[[:alpha:] ]+$' contiene basicamente todas las letras y vocales con o sin acentos y me ayuda a no tener que escribir todo uno por uno
+
 -- FUNCION PARA CONSULTAR LA VISTA DE ORDENES
 
 -- Lo formatee asi porque DBeaver hace cualquier cosa y era dificil de leer...
-create 
-or 
-replace
-function 
-fn_consulta_ordenes(p_cliente text, p_empleado text) 
-returns 
-table 
+create or replace function fn_consulta_ordenes(p_cliente text, p_empleado text) returns table 
 (
 cliente_id varchar(5),
 cliente_contacto varchar(30),
@@ -292,8 +289,8 @@ begin
 cliente := trim(p_cliente);
 empleado := trim(p_empleado);
 
-return 
-query 
+return query 
+
 select
 vo.cliente_id,
 vo.cliente_contacto,
@@ -318,7 +315,7 @@ end;
 $$ language plpgsql;
 
 -- Comprobar que filtra adecuadamente
---select * from fn_consulta_ordenes('Maria', 'Suya');
+select * from fn_consulta_ordenes('Maria', 'Suya');
 
 -- FUNCION PARA CONSULTAR LA VISTA CLIENTES
 
@@ -425,5 +422,5 @@ end;
 $$ language plpgsql;
 
 -- Para comparar
--- select * from fn_datos_cliente('vinet');
+select * from fn_datos_cliente('facuu');
 -- select * from customers where customerid = 'VINET';
